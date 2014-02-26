@@ -12,6 +12,7 @@ import org.apache.mesos.Protos._
 import scala.collection.mutable.HashSet
 import scala.collection.mutable.HashMap
 import mesosphere.mesos.util.FrameworkIdUtil
+import com.airbnb.utils.JobDeserializer
 
 /**
  * Provides the interface to mesos. Receives callbacks from mesos when resources are offered, declined etc.
@@ -28,6 +29,7 @@ class MesosJobFramework @Inject()(
 
   private[this] val log = Logger.getLogger(getClass.getName)
   private var runningJobs = new HashMap[String, String]
+  JobDeserializer.config = config
 
   val frameworkName = "chronos"
 

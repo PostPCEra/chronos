@@ -24,6 +24,9 @@ function populateWithContent(name, isEditing) {
   var schedule = job["schedule"];
   var disabled = job["disabled"];
   var type = job["jobType"]
+  var cpus = job["cpus"];
+  var mem = job["mem"];
+  var disk = job["disk"];
   if (parents === undefined) {
     var parentString = "";
   } else {
@@ -32,7 +35,7 @@ function populateWithContent(name, isEditing) {
   if (schedule === undefined) {
     schedule = "";
   }
-  populateJobModal(name, command, owner, parentString, schedule, disabled, type, isEditing)
+  populateJobModal(name, command, owner, parentString, schedule, disabled, type, isEditing, cpus, mem, disk)
 }
 
 $(function() {
@@ -105,6 +108,9 @@ $(function() {
     var name = $('#nameInput').val();
     var owner = $('#ownerInput').val(); // May be comma separated list.
     var owners = owner.split(",");
+    var cpus = parseFloat($('#cpusInput').val());
+    var mem = Math.floor(parseFloat($('#memInput').val()));
+    var disk = Math.floor(parseFloat($('#diskInput').val()));
 
     // Sanity check for proper email addresses.
     var hasBrokenOwner = false;
@@ -127,6 +133,9 @@ $(function() {
     job_hash["command"] = command;
     job_hash["name"] = name;
     job_hash["owner"] = owner;
+    job_hash["cpus"] = cpus;
+    job_hash["mem"] = mem;
+    job_hash["disk"] = disk;
 
     if ($('#parentsInput').val().length > 0) {
       // This is a dependent job.
@@ -429,13 +438,16 @@ function buildResultsTable() {
   $('#jobData').html(trstrings.join("\n"));
 }
 
-function populateJobModal(name, command, owner, parents, schedule, disabled, type, isEditing) {
+function populateJobModal(name, command, owner, parents, schedule, disabled, type, isEditing, cpus, mem, disk) {
   $('#jobModal').on('show.bs.modal', function() {
     // If creating a new job, pass empty strings.
     $('#nameInput').val(name);
     $('#commandInput').val(command);
     $('#ownerInput').val(owner);
     $('#parentsInput').val(parents);
+    $('#cpusInput').val(cpus);
+    $('#memInput').val(mem);
+    $('#diskInput').val(disk);
     // Parse the schedule string into repeats, date, time, period
     if (type === "scheduled") {
       var parts = schedule.split("/");
